@@ -1,13 +1,12 @@
-#Imports
-
 import time
 from slackclient import SlackClient
 
+# TO DO: CHECK FOR USER ID. DO NOT DO ANYTHING IF ID IS MARVIN
 #---------------------------#
 #Programmer: Joey Domino    #
 #Date: 7/2/18               #
-#Program:botson for Slack   #
-#Basic chatbot for starters #
+#Program:marvin for Slack   #
+#Basic chatbot for now      #
 #---------------------------#
 
 SLACK_TOKEN = 'xoxb-8483522179-392696063798-IItvotS2Kd5pMiszkQarYeMx'
