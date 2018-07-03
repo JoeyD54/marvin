@@ -30,10 +30,13 @@ def call_clever_bot(message):
 #------------------------------------------------------#
 def parse_command(slack_events):
     for event in slack_events:
-        if event["type"] == "message" and not "subtype" in event:
-            if "!m" or "marvin" in event["text"].lower():
-                print(event["channel"])
-                return event["text"], event["channel"]
+        if "user" in event:
+            if event["user"] != "UBJLG1VPG":
+                if event["type"] == "message" and not "subtype" in event:
+                    if "!m" in event["text"].lower() or "marvin" in event["text"].lower():
+                        print(event["channel"])
+                        return event["text"], event["channel"]
+    print("marvin not called")  
     return None, None
 
 #------------------------------------------------------#
