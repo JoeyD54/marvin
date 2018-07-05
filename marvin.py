@@ -66,10 +66,10 @@ def parse_command(slack_events):
 #Arguments: command, channel
 #Returns: none
 #------------------------------------------------------#
-def handle_command(command, channel, convo_started):
+def handle_command(command, channel, cb_convo):
     #if 
     #print(command)
-    response = call_clever_bot(command, convo_started)
+    response = call_clever_bot(command, cb_convo)
     #print(response)
     slack_client.api_call(
         "chat.postMessage",
@@ -83,15 +83,12 @@ def handle_command(command, channel, convo_started):
 #Arguments: message (user's inputted message)
 #Returns: response (API's response to user message)
 #------------------------------------------------------#
-def call_clever_bot(message, convo_started):
+def call_clever_bot(message, clever_bot_convo):
     #url_params = {'input' : message, 'key' : CLEVERBOT_TOKEN}
     try:
-        if convo_started is 0:
-            cb = cleverbot.Cleverbot(CLEVERBOT_TOKEN, cs='76nxdxIJ02AAA', timeout=60, tweak1=0, tweak2=100, tweak3=100)
-            convo = cb.conversation()
-            print("\n\nNew conversation started\n\n")
-            convo_started = 1
-        reply = convo.say(message)
+        #cb = cleverbot.Cleverbot(CLEVERBOT_TOKEN, cs='76nxdxIJ02AAA', timeout=60, tweak1=0, tweak2=100, tweak3=75)
+        #convo = cb.conversation()
+        reply = clever_bot_convo.say(message)
         return reply
     #data received correctly. Get response to print now.
         #return reply.get("output", None)
@@ -108,14 +105,15 @@ def call_clever_bot(message, convo_started):
 #------------------------------------------------------#
 if __name__ == '__main__':
     slack_client = SlackClient(SLACK_TOKEN)
-    convo_started = 0
+    cb = cleverbot.Cleverbot(CLEVERBOT_TOKEN, cs='76nxdxIJ02AAA', timeout=60, tweak1=0, tweak2=100, tweak3=75)
+    convo = cb.conversation()
     if(slack_client.rtm_connect()):
         print("Marvin has connected sir. As if it matters.")
         marvin_id = slack_client.api_call("auth.test")["user_id"]
         while True:
             command, channel = parse_command(slack_client.rtm_read())
             if command:
-                handle_command(command, channel, convo_started)
+                handle_command(command, channel, convo)
             time.sleep(READ_WEB_DELAY)
     else:
         print("RTM connection failure. Check Token dingleberry. DO IT AGAIN!")
