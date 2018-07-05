@@ -16,7 +16,6 @@ CLEVERBOT_TOKEN = 'CC8lzaIMoM8kVAcwNw36CJHfGDg'
 CLEVERBOT_URL = 'https://www.cleverbot.com/getreply'
 marvin_id = None
 READ_WEB_DELAY = 1   #1 second delay between each RTM read
-convo_started = 0
 
 
 #------------------------------------------------------#
@@ -67,10 +66,10 @@ def parse_command(slack_events):
 #Arguments: command, channel
 #Returns: none
 #------------------------------------------------------#
-def handle_command(command, channel):
+def handle_command(command, channel, convo_started):
     #if 
     #print(command)
-    response = call_clever_bot(command)
+    response = call_clever_bot(command, convo_started)
     #print(response)
     slack_client.api_call(
         "chat.postMessage",
@@ -109,13 +108,14 @@ def call_clever_bot(message, convo_started):
 #------------------------------------------------------#
 if __name__ == '__main__':
     slack_client = SlackClient(SLACK_TOKEN)
+    convo_started = 0
     if(slack_client.rtm_connect()):
         print("Marvin has connected sir. As if it matters.")
         marvin_id = slack_client.api_call("auth.test")["user_id"]
         while True:
             command, channel = parse_command(slack_client.rtm_read())
             if command:
-                handle_command(command, channel)
+                handle_command(command, channel, convo_started)
             time.sleep(READ_WEB_DELAY)
     else:
         print("RTM connection failure. Check Token dingleberry. DO IT AGAIN!")
