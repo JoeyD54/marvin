@@ -24,11 +24,14 @@ READ_WEB_DELAY = 1   #1 second delay between each RTM read
 #Returns: response (API's response to user message)
 #------------------------------------------------------#
 def call_clever_bot(message):
-    url_payload = {'input' : message, 'key' : CLEVERBOT_TOKEN}
-    return_data = requests.get(CLEVERBOT_URL, url_payload)
+    url_params = {'input' : message, 'key' : CLEVERBOT_TOKEN}
+    try:
+        reply = requests.get(CLEVERBOT_URL, url_params)
+    except requests.exceptions.RequestException as e:
+        print(e)
+    reply = reply.json(strict=False)
     #data received correctly. Get response to print now.
-    
-    return
+    return reply.get("output", None)
 
 #------------------------------------------------------#
 #Function: parse_command
@@ -64,14 +67,14 @@ def parse_command(slack_events):
 #------------------------------------------------------#
 def handle_command(command, channel):
     #if 
-    print(command)
-    call_clever_bot(command)
-    #print(clever_bot_response)
-    #slack_client.api_call(
-    #    "chat.postMessage",
-    #    channel = channel,
-    #    text = command,
-    #    as_user = True)
+    #print(command)
+    response = call_clever_bot(command)
+    #print(response)
+    slack_client.api_call(
+        "chat.postMessage",
+        channel = channel,
+        text = response,
+        as_user = True)
 
 #main gatta be on the bottom. Code runs top to bottom. Functions need to be init'd first. For future notice (because Joey forgets things).
 #------------------------------------------------------#
